@@ -28,3 +28,6 @@ node_modules
 
 #database
 data/
+
+#Visual Studio Code settings dir
+.settings
