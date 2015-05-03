@@ -1,4 +1,5 @@
 var express = require('express');
+var scoreModel = require('../public/javascripts/score')
 var router = express.Router();
 
 router.get('/', function(req,res,next){
@@ -9,14 +10,30 @@ router.get('/', function(req,res,next){
   });
 });
 
+router.get('/scores/category/:category', function (req,res,next) {
+  var category = req.params.category;  
+  var dbCollection = req.db.get('scores');
+  dbCollection.find({'category':category}, function(e, docs){
+    if (!e){
+      res.render('index', {players:docs});
+    }else{
+      res.status(500).send(e);
+    }
+  });
+ });
 
 router.put('/score', function(req,res,next){
-  var player = req.body;
-  console.log('player: ' +JSON.stringify(player));
+  var score = req.body;
+  console.log('player: ' +JSON.stringify(score));
   var db = req.db;
   var dbCollection = db.get('scores');
-   dbCollection.insert(req.body);
-   res.status(200).send();
+  if(scoreModel.isValid(score)){
+    dbCollection.insert(score);
+    res.status(200).send();
+  }else{
+    res.status(400).send();
+  }
+
 });
 
 module.exports = router;
