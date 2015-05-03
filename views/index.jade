@@ -1,5 +1,5 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  each val in players
+    p Welcome #{val.playername}, your highscore is #{val.score}
