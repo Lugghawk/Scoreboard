@@ -38,9 +38,9 @@ router.put('/score', function(req,res,next){
   scoreModel.create(score);
   if(score.isValid()){
     var promise = score.insert();
-    promise.success(function(doc){
+    promise.then(function(doc){
       res.status(200).send(doc);  
-    }).error(function(e){
+    },function(e){
       res.status(500).send(e);
     });
     

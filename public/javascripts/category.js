@@ -27,9 +27,7 @@ var category = {
 			if (docs.length > 0){
 				deferred.reject("Category with name already exists");
 			}else{
-				console.log(that);
 				var promise = dbCollection.insert(that);
-				console.log(promise.type);
 				promise.success(function(doc){
 					deferred.resolve(doc);
 				});
