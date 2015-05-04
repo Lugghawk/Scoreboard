@@ -1,17 +1,29 @@
 //Defines the score object and handles all its validation
-var score = {};
-score.isValid = function(score){
-	if (!score.catagory){
-		return false;
+var extend = require ('extend');
+var db = require('./db');
+var dbCollection = db.get('scores');
+var score = {
+	create: function(obj){
+		extend(obj, this);	
+	},
+	isValid : function(){
+		if (!this.categoryid){
+			return false;
+		}
+		if (!this.playername){
+			return false;
+		}
+		if (!this.score){
+			return false;
+		}
+		return true;
+	},
+	insert: function(){
+		return dbCollection.insert(this);//Promise
+	},
+	find: function(criteria){
+		return dbCollection.find(criteria);
 	}
-	if (!score.playername){
-		return false;
-	}
-	
-	if (!score.score){
-		return false;
-	}
-	return true;
 }
 
 module.exports = score;

@@ -6,10 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var mongo = require('mongodb');
-var monk = require('monk');
-var db = monk('localhost:27017/scoreboard')
+var db = require('./public/javascripts/db.js');
 
 var app = express();
 
@@ -31,7 +28,6 @@ app.use(function(req,res,next){
 });
 
 app.use('/', routes);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

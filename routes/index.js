@@ -1,37 +1,51 @@
 var express = require('express');
 var scoreModel = require('../public/javascripts/score')
+var categoryModel = require('../public/javascripts/category')
 var router = express.Router();
 
 router.get('/', function(req,res,next){
-  var db = req.db;
-  var collection = db.get('scores');
-  collection.find({}, function(e,docs){
+  scoreModel.find({}).success(function(docs){
     res.render('index', {players:docs});
+  }).error(function(e){
+    res.status(500).send(e);
   });
 });
 
-router.get('/scores/category/:category', function (req,res,next) {
-  var category = req.params.category;  
-  var dbCollection = req.db.get('scores');
-  dbCollection.find({'category':category}, function(e, docs){
-    if (!e){
+router.get('/scores/category/:categoryid', function (req,res,next) {
+  var categoryid = Number(req.params.categoryid);  
+  console.log('categoryid: ' + categoryid);
+  scoreModel.find({'categoryid':categoryid}).success(function(docs){
+    console.log('success: ' + JSON.stringify(docs));
       res.render('index', {players:docs});
-    }else{
+  }).error(function(e){
       res.status(500).send(e);
-    }
   });
  });
+ 
+router.put('/category', function(req,res,next){
+  var category = req.body;
+  categoryModel.create(category);
+  var promise = category.insert();
+  promise.then(function(doc){
+    res.status(200).send(doc);
+  }, function(e){
+    res.status(500).send(e);
+  });
+});
 
 router.put('/score', function(req,res,next){
   var score = req.body;
-  console.log('player: ' +JSON.stringify(score));
-  var db = req.db;
-  var dbCollection = db.get('scores');
-  if(scoreModel.isValid(score)){
-    dbCollection.insert(score);
-    res.status(200).send();
+  scoreModel.create(score);
+  if(score.isValid()){
+    var promise = score.insert();
+    promise.success(function(doc){
+      res.status(200).send(doc);  
+    }).error(function(e){
+      res.status(500).send(e);
+    });
+    
   }else{
-    res.status(400).send();
+    res.status(400).send('invalid score');
   }
 
 });
